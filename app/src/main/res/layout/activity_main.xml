@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.example.mel.series.MainActivity"
+    android:orientation="vertical"
+    android:background="@drawable/series">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bienvenido"
+        android:id="@+id/textView"
+        android:layout_gravity="center_vertical"
+        style="@style/Base.TextAppearance.AppCompat.Title"
+        android:enabled="true"
+        android:focusable="false"
+        android:gravity="center_horizontal" />
+
+    <fragment
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/fragmentLogin"
+        class="com.example.mel.series.FragmentLogin"
+        tools:layout="@layout/fragmentlogin" />
+
+
+</LinearLayout>
