@@ -1,10 +1,10 @@
 package com.example.mel.series;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.ContentValues;
-import android.content.Context;
+
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,7 +22,6 @@ import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import static android.widget.Toast.makeText;
 
 /**
  * Created by Mel on 15/7/2016.
@@ -34,7 +33,8 @@ public class FragmentLogin extends Fragment {
     private LoginButton loginButton;
     private TextView info, info2;
 
-    private TransmitirDatos informacion;
+    private String nombreBD;
+    private String idFaceBD;
 
 
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -55,6 +55,7 @@ public class FragmentLogin extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         loginButton = (LoginButton)view.findViewById(R.id.login_button);
         loginButton.setReadPermissions("user_friends");
         loginButton.setFragment(this);
@@ -67,10 +68,13 @@ public class FragmentLogin extends Fragment {
                 AccessToken accessToken = loginResult.getAccessToken();
                 Profile profile = Profile.getCurrentProfile();
                 if (profile!=null) {
-                    info.setText("BIENVENIDO " + profile.getName());
-                    info2.setText("ID " + profile.getId());
 
-                    //informacion.transmitirDatos(profile.getId(), profile.getName());
+                    nombreBD=profile.getName();
+                    idFaceBD = profile.getId();
+
+                    info.setText("BIENVENIDO " + nombreBD);
+                    info2.setText("ID " + idFaceBD);
+                    altaUsuario(idFaceBD,nombreBD);
                 }
             }
 
@@ -84,6 +88,8 @@ public class FragmentLogin extends Fragment {
                 info.setText("Login attempt failed.");
             }
         });
+
+
     }
 
     @Override
@@ -92,11 +98,37 @@ public class FragmentLogin extends Fragment {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    //tener cuidado que el onAttach (activity) esta en desuso
-    public void onAttach (Context context){
-        super.onAttach(context);
-        informacion = (TransmitirDatos) context;
+    public void altaUsuario(String idF, String nom) {
 
+        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(getActivity(),"DBAppSeries", null, 1);
+        SQLiteDatabase bd = admin.getWritableDatabase();
+
+        //primero lo busco en la BD
+        Cursor fila = bd.rawQuery("select id,nombreApellido,tema  from usuario where idFace=" + idF, null); //devuelve 0 o 1 fila //es una consulta
+
+        if (fila.moveToFirst()) {  //si devolvió 1 fila, vamos al primero (que es el unico)
+
+            //ya esta registrado en la BD
+            Toast.makeText(getActivity(),"BIENVENIDO NUEVAMENTE",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            //si no esta en la BD lo inserto
+
+
+            String tema = "tema1";  //le estoy mandado cualquier tema, ojo aca!
+
+            ContentValues registro = new ContentValues();  //es una clase para guardar datos
+
+            registro.put("idFace", idF);
+            registro.put("nombreApellido", nom);
+            registro.put("tema", tema);
+
+            bd.insert("usuario", null, registro);
+            bd.close();
+
+            String msj = "idFace " + idF + " nombre " + nom;
+            Toast.makeText(getActivity(), "AltaUsuario " + msj, Toast.LENGTH_SHORT).show();
+        }
     }
 
 

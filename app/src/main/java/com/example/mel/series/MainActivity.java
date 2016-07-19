@@ -1,7 +1,6 @@
 package com.example.mel.series;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,7 +11,7 @@ import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 
-public class MainActivity extends AppCompatActivity implements TransmitirDatos{
+public class MainActivity extends AppCompatActivity {
 
     private String nombre;
     private String idFace;
@@ -23,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements TransmitirDatos{
         setContentView(R.layout.activity_main);
         //FacebookSdk.sdkInitialize(getApplicationContext());
     }
+
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -42,32 +42,5 @@ public class MainActivity extends AppCompatActivity implements TransmitirDatos{
         }
     }
 
-    public void altaUsuario(View v) {
 
-        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this,"DBAppSeries", null, 1);
-        SQLiteDatabase bd = admin.getWritableDatabase();
-
-        //levanto la info de los TextView pero en realidad hay que traerlo desde Profile
-        String nom = nombre;
-        String idF = idFace;
-        String tema = "tema1";
-
-        ContentValues registro = new ContentValues();  //es una clase para guardar datos
-
-        registro.put("idFace", idF);
-        registro.put("nombreApellido", nom);
-        registro.put ("tema", tema);
-
-        bd.insert("usuario", null, registro);
-        bd.close();
-
-        String msj = "idFace " + idF + " nombre " + nom;
-        Toast.makeText(this,"AltaUsuario " + msj,Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void transmitirDatos(String id, String name) {
-        nombre=name;
-        idFace = id;
-    }
 }
